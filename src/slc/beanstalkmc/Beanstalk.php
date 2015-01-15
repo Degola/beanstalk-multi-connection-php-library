@@ -86,7 +86,7 @@ class Beanstalk {
 
 	public function publishMessage($message, $tube = 'DefaultTube', $priority = 0, $delay = 0, $timeToRun = 600) {
 		$handlers = $this->getConnection()->useTube($tube, false);
-		$this->getConnection()->addJob($message, $handlers, $priority, $delay, $timeToRun);
+		return $this->getConnection()->addJob($message, $handlers, $priority, $delay, $timeToRun);
 	}
 	/**
 	 * Starts

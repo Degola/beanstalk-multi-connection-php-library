@@ -219,6 +219,13 @@ class Beanstalk_Connection {
 		$this->send($message, $handlers);
 		$this->send($jobData, $handlers);
 		$result = $this->receive(null, $handlers, 'inserted');
+
+		if(isset($result[0]) && $result[0] instanceof Beanstalk_Packet) {
+			if($result[0]->getType() == 'inserted') {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
