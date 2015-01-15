@@ -2,7 +2,7 @@
     "name": "slc/beanstalkmc",
     "description": "Beanstalk multi connection library",
     "minimum-stability": "stable",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Sebastian Lagemann",
