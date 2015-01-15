@@ -1,5 +1,7 @@
 <?php
 
+namespace slc\beanstalkmc;
+
 /**
  * Handles all connections to the beanstalk server.
  */

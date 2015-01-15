@@ -1,5 +1,7 @@
 <?php
 
+namespace slc\beanstalkmc;
+
 class Beanstalk_Exception extends \Exception {
 	const EXCEPTION_BASE = 50000000;
 	const CONNECTION_FAILED = 10;

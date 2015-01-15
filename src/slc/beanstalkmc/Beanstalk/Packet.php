@@ -1,5 +1,7 @@
 <?php
 
+namespace slc\beanstalkmc;
+
 /**
  * Packets which were received from the receive method.
  */

@@ -1,5 +1,7 @@
 <?php
 
+namespace slc\beanstalkmc;
+
 /**
  * A single beanstalk job, fetched with reserve.
  */
@@ -35,7 +37,7 @@ class Beanstalk_Job {
 	 */
 	public function delete() {
 		$this->BeanstalkConnection->send(sprintf('delete %s', $this->jobId), $this->handler);
-		if(Driver::DEBUG) echo "D";
+		if(Beanstalk::DEBUG) echo "D";
 	}
 
 	/**

@@ -1,5 +1,7 @@
 <?php
 
+namespace slc\beanstalkmc;
+
 /**
  * Class Beanstalk_StatsResult
  *

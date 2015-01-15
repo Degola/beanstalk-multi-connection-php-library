@@ -22,7 +22,7 @@ class Beanstalk {
 		$this->config = (object) $config;
 
 		if(!isset($this->config->Host))
-			throw new Driver_Exception('CONFIGURATION_MISMATCH', array('Configuration' => $this->config));
+			throw new Beanstalk_Exception('CONFIGURATION_MISMATCH', array('Configuration' => $this->config));
 
 		if (!isset($this->config->Port)) {
 			$this->config->Port = 11300;
@@ -34,11 +34,11 @@ class Beanstalk {
 
 	/**
 	 * Fetches the Beanstalk connection if it exists and creates it otherwise.
-	 * @return Driver_Connection
+	 * @return Beanstalk_Connection
 	 */
 	protected function getConnection() {
 		if (is_null($this->BeanstalkConnection)) {
-			$this->BeanstalkConnection = new Driver_Connection(
+			$this->BeanstalkConnection = new Beanstalk_Connection(
 				$this->config->Host,
 				$this->config->Port,
 				$this->config->Connections
@@ -102,7 +102,7 @@ class Beanstalk {
 	 * @param $callback - If provided, it will be provided as an argument for each call of the
 	 * Beanstalk_Connection::receive() method. Is used in order to stop a beanstalkd
 	 * consumer.
-	 * @return Driver_Job[]|mixed
+	 * @return Beanstalk_Job[]|mixed
 	 */
 	public function fetchReserved($callback=null) {
 		$return = array();
@@ -157,8 +157,8 @@ class Beanstalk {
 	/**
 	 * returns statistics from beanstalkd
 	 *
-	 * @return Driver_StatsResult
-	 * @throws Driver_StatsResultException
+	 * @return Beanstalk_StatsResult
+	 * @throws Beanstalk_StatsResultException
 	 */
 	public function getStats() {
 		return $this->getConnection()->getStats();
@@ -168,8 +168,8 @@ class Beanstalk {
 	 * returns tube statistics from beanstalkd
 	 *
 	 * @param $tube name of tube
-	 * @return Driver_StatsTubeResult
-	 * @throws Driver_StatsResultException
+	 * @return Beanstalk_StatsTubeResult
+	 * @throws Beanstalk_StatsResultException
 	 */
 	public function getStatsTube($tube) {
 		return $this->getConnection()->getStatsTube($tube);
