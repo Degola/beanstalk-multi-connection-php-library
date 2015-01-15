@@ -3,7 +3,7 @@
 /**
  * Handles all connections to the beanstalk server.
  */
-class Driver_Connection {
+class Beanstalk_Connection {
 	const DEBUG = false;
 	const CRLF  = "\r\n";
 	protected $host;
@@ -16,11 +16,11 @@ class Driver_Connection {
 		$this->host = $host;
 		$this->port = $port;
 		for($i = 0; $i < $connections; $i++) {
-			if(Driver_Connection::DEBUG) {
+			if(Beanstalk_Connection::DEBUG) {
 				echo "open connection ".($i)."...";
 			}
 			$this->connect($i);
-			if(Driver_Connection::DEBUG) {
+			if(Beanstalk_Connection::DEBUG) {
 				echo "done.\n";
 			}
 		}
@@ -39,13 +39,13 @@ class Driver_Connection {
 	 * @param $id - The ID which will correspond to the newly opened socket connection.
 	 * @param int $reconnectCounter - The number of connections calls that have failed.
 	 * @return bool
-	 * @throws Driver_Exception - If more than 3 connection calls failed or
+	 * @throws Beanstalk_Exception - If more than 3 connection calls failed or
 	 * if either the host or the port are not defined..
 	 */
 	protected function connect($id, $reconnectCounter=0) {
 		if (!$this->isConnected($id)) {
 			if (!isset($this->host) || !isset($this->port)) {
-				throw new Driver_Exception('CONFIGURATION_MISMATCH', array(
+				throw new Beanstalk_Exception('CONFIGURATION_MISMATCH', array(
 					'host' => isset($this->host) ? $this->host : 'undefined',
 					'port' => isset($this->port) ? $this->port : 'undefined',
 				));
@@ -55,7 +55,7 @@ class Driver_Connection {
 				stream_set_blocking($this->handlers[$id], 0);
 			} else {
 				if ($reconnectCounter > 3) {
-					throw new Driver_Exception('CONNECTION_FAILED', array(
+					throw new Beanstalk_Exception('CONNECTION_FAILED', array(
 						'host' => $this->host,
 						'port' => $this->port,
 					));
@@ -89,7 +89,7 @@ class Driver_Connection {
 			$handlers = $this->handlers;
 		}
 		foreach($handlers AS $i => $handler) {
-			if(Driver_Connection::DEBUG) {
+			if(Beanstalk_Connection::DEBUG) {
 				echo "sending to connection ".($i)." (".$string.")...";
 				$s = microtime(true);
 			}
@@ -101,13 +101,13 @@ class Driver_Connection {
 			@stream_set_blocking($handler, 1);
 
 			if(!fputs($handler, $string.static::CRLF))
-				throw new Driver_Connection_Exception('WRITE_FAILED', array('String' => $string));
+				throw new Beanstalk_Connection_Exception('WRITE_FAILED', array('String' => $string));
 
 			fflush($handler);
 			@stream_set_blocking($handler, 0);
 
 			$this->lastCommands[$i] = $string;
-			if (Driver_Connection::DEBUG) {
+			if (Beanstalk_Connection::DEBUG) {
 				echo "done. (".number_format(microtime(true) - $s, 5)."s)\n";
 			}
 		}
@@ -135,17 +135,17 @@ class Driver_Connection {
 			foreach ($handlers AS $connId => $handler) {
 				if (!is_bool($handler) && $this->isConnected($connId) && !feof($handler)) {
 					if ($line = fgets($handler, 8192)) {
-						if (Driver_Connection::DEBUG) {
+						if (Beanstalk_Connection::DEBUG) {
 							echo "read data from connection ".$connId."...";
 							$s = microtime(true);
 						}
-						$result[] = new Driver_Packet(
+						$result[] = new Beanstalk_Packet(
 							$this,
 							array($connId => $handler),
 							$line,
 							$expectedType
 						);
-						if (Driver_Connection::DEBUG) {
+						if (Beanstalk_Connection::DEBUG) {
 							echo "done. (".number_format(microtime(true) - $s, 5)."s)\n";
 						}
 					} else {
@@ -179,11 +179,11 @@ class Driver_Connection {
 	 * @param $tube
 	 * @param bool $allHandlers
 	 * @return array
-	 * @throws Driver_Exception
+	 * @throws Beanstalk_Exception
 	 */
 	public function useTube($tube, $allHandlers = true) {
 		if(!$this->validateTubeName($tube))
-			throw new Driver_Exception('INVALID_TUBE_NAME', array('Tube' => $tube));
+			throw new Beanstalk_Exception('INVALID_TUBE_NAME', array('Tube' => $tube));
 
 		if($allHandlers === true)
 			$handlers = $this->handlers;
@@ -222,8 +222,8 @@ class Driver_Connection {
 	/**
 	 * returns statistics from beanstalkd
 	 *
-	 * @return Driver_StatsResult
-	 * @throws Driver_StatsResultException
+	 * @return Beanstalk_StatsResult
+	 * @throws Beanstalk_StatsResultException
 	 */
 	public function getStats() {
 		$handler = array($this->handlers[array_rand($this->handlers)]);
@@ -236,13 +236,13 @@ class Driver_Connection {
 	 * returns tube statistics from beanstalkd
 	 *
 	 * @param $tube name of tube
-	 * @return Driver_StatsTubeResult
-	 * @throws Driver_StatsResultException
-	 * @throws Driver_Exception
+	 * @return Beanstalk_StatsTubeResult
+	 * @throws Beanstalk_StatsResultException
+	 * @throws Beanstalk_Exception
 	 */
 	public function getStatsTube($tube) {
 		if(!$this->validateTubeName($tube))
-			throw new Driver_Exception('INVALID_TUBE_NAME', array('Tube' => $tube));
+			throw new Beanstalk_Exception('INVALID_TUBE_NAME', array('Tube' => $tube));
 
 		$handler = array($this->handlers[array_rand($this->handlers)]);
 		$this->send(sprintf('stats-tube %s', $tube), $handler);
@@ -258,7 +258,7 @@ class Driver_Connection {
 				break;
 			case 'bad format':
 			default:
-				throw new Driver_Exception('INVALID_STATS_RESULT', array('Type' => $result->getType(), 'Data' => $result->getData()));
+				throw new Beanstalk_Exception('INVALID_STATS_RESULT', array('Type' => $result->getType(), 'Data' => $result->getData()));
 		}
 	}
 
@@ -276,7 +276,7 @@ class Driver_Connection {
 		if(sizeof($handlers) == 0) $handlers = $this->handlers;
 		try {
 			$this->send('quit', $handlers);
-		} catch(Driver_Connection_Exception $ex) {
+		} catch(Beanstalk_Connection_Exception $ex) {
 			if($ex->getCode() !== 50002001)
 				throw $ex;
 		}

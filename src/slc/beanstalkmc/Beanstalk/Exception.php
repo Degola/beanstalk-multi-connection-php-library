@@ -1,6 +1,6 @@
 <?php
 
-class Driver_Exception extends \Exception {
+class Beanstalk_Exception extends \Exception {
 	const EXCEPTION_BASE = 50000000;
 	const CONNECTION_FAILED = 10;
 	const CONFIGURATION_MISMATCH = 1;

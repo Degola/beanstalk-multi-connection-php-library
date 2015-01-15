@@ -12,7 +12,7 @@ namespace slc\beanstalkmc;
  * latency environments through multiple connections and socket stream selects.
  */
 
-class Driver {
+class Beanstalk {
 	const DEBUG = false;
 	protected $config = null;
 	protected $BeanstalkConnection = null;
@@ -100,7 +100,7 @@ class Driver {
 	 * Fetches reserved messages and points out whenever a message has been deleted, released or
 	 * timed out.
 	 * @param $callback - If provided, it will be provided as an argument for each call of the
-	 * Driver_Connection::receive() method. Is used in order to stop a beanstalkd
+	 * Beanstalk_Connection::receive() method. Is used in order to stop a beanstalkd
 	 * consumer.
 	 * @return Driver_Job[]|mixed
 	 */
@@ -117,25 +117,25 @@ class Driver {
 				switch($packet->getType()) {
 					case 'package':
 						$return[] = $packet->getData();
-						if (Driver::DEBUG) {
+						if (Beanstalk::DEBUG) {
 							echo ".";
 						}
 						break;
 					case 'deleted':
 						$conn->send('reserve-with-timeout 10', $packet->getHandler());
-						if (Driver::DEBUG) {
+						if (Beanstalk::DEBUG) {
 							echo "d";
 						}
 						break;
 					case 'released':
 						$conn->send('reserve-with-timeout 10', $packet->getHandler());
-						if (Driver::DEBUG) {
+						if (Beanstalk::DEBUG) {
 							echo "r";
 						}
 						break;
 					case 'timeout':
 						$conn->send('reserve-with-timeout 10', $packet->getHandler());
-						if (Driver::DEBUG) {
+						if (Beanstalk::DEBUG) {
 							echo "t";
 						}
 						break;
@@ -145,7 +145,7 @@ class Driver {
 						 * the queue, ensure that timeout to run value is high enough during publishing the message
 						 */
 						$conn->send('reserve-with-timeout 10', $packet->getHandler());
-						if(Driver::DEBUG)
+						if(Beanstalk::DEBUG)
 							echo "N";
 						break;
 				}

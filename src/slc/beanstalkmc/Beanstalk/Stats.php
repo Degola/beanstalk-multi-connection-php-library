@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class Driver_Stats
+ * Class Beanstalk_Stats
  *
  * parses stats results from beanstalkd
  */
-class Driver_Stats {
+class Beanstalk_Stats {
 	protected $data;
 	public function __construct($data) {
 		$this->data = $this->parseYaml($data);

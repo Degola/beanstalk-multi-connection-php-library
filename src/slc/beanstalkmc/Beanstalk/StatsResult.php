@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class Driver_StatsResult
+ * Class Beanstalk_StatsResult
  *
  * allows access to stats command to beanstalkd
  */
-class Driver_StatsResult extends Driver_Stats {
+class Beanstalk_StatsResult extends Beanstalk_Stats {
 	public function __construct($data) {
 		parent::__construct($data);
 		if(!$this->validateData(array(
@@ -53,7 +53,7 @@ class Driver_StatsResult extends Driver_Stats {
 			'binlog-oldest-index',
 			'binlog-current-index',
 			'binlog-max-size',
-		), $this->data)) throw new Driver_StatsResultException('INVALID_FORMAT', array('Data' => $data));
+		), $this->data)) throw new Beanstalk_StatsResultException('INVALID_FORMAT', array('Data' => $data));
 	}
 }
 

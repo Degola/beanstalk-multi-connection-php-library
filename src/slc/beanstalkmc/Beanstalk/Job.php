@@ -3,7 +3,7 @@
 /**
  * A single beanstalk job, fetched with reserve.
  */
-class Driver_Job {
+class Beanstalk_Job {
 	protected $BeanstalkConnection;
 	protected $handler;
 	protected $jobId;

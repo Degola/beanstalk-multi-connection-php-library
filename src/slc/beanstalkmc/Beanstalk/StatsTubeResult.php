@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class Driver_StatsTubeResult
+ * Class Beanstalk_StatsTubeResult
  *
  * allows access to stats-tube command to beanstalkd
  */
-class Driver_StatsTubeResult extends Driver_Stats {
+class Beanstalk_StatsTubeResult extends Beanstalk_Stats {
 	public function __construct($data) {
 		parent::__construct($data);
 		if(!$this->validateData(array(
@@ -23,7 +23,7 @@ class Driver_StatsTubeResult extends Driver_Stats {
 			'cmd-pause-tube',
 			'pause',
 			'pause-time-left',
-		), $this->data)) throw new Driver_StatsResultException('INVALID_FORMAT', array('Data' => $data));
+		), $this->data)) throw new Beanstalk_StatsResultException('INVALID_FORMAT', array('Data' => $data));
 	}
 }
 
